@@ -1,7 +1,7 @@
 const fs = require('fs');
+const path = require('path');
 const inquirer = require('inquirer');
 
-// Function to generate the README content based on user input
 function generateREADME(answers) {
     return `
 # ${answers.title}
@@ -37,7 +37,6 @@ For questions about this project, please reach out to [${answers.username}](http
 `;
 }
 
-// Function to prompt user for input
 function promptUser() {
     return inquirer.prompt([
         {
@@ -64,7 +63,7 @@ function promptUser() {
             type: 'input',
             name: 'license',
             message: 'Choose a license:',
-            default: 'MIT' // Default license
+            default: 'MIT'
         },
         {
             type: 'input',
@@ -89,17 +88,22 @@ function promptUser() {
     ]);
 }
 
-// Main function to run the script
 async function main() {
     try {
-        const answers = await promptUser(); // Prompt user for input
-        const readmeContent = generateREADME(answers); // Generate README content
-        fs.writeFileSync('README.md', readmeContent); // Write content to README.md file
-        console.log('README.md file generated successfully!');
+        const answers = await promptUser();
+        const readmeContent = generateREADME(answers);
+
+        const examplesDir = path.join(__dirname, 'examples');
+        if (!fs.existsSync(examplesDir)) {
+            fs.mkdirSync(examplesDir);
+        }
+
+        const readmePath = path.join(examplesDir, 'README.md');
+        fs.writeFileSync(readmePath, readmeContent);
+        console.log('README.md file generated successfully in the examples folder!');
     } catch (error) {
         console.error('Error generating README.md:', error);
     }
 }
 
-// Run the main function
 main();
